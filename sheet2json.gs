@@ -1,5 +1,5 @@
 function doGet() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet4");
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
   var range = sheet.getDataRange();
   var values = range.getValues();
   var headers = values.shift();
