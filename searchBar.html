@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .input-wrapper {
+        margin-bottom: 10px;
+      }
+      label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="text"], select, input[type="range"] {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+      input[type="range"] {
+        margin-bottom: 0;
+      }
+      .result-wrapper {
+        margin-top: 20px;
+      }
+      .result-count {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .result-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .result-list li {
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="input-wrapper">
+      <label for="searchQuery">Search query:</label>
+      <input type="text" id="searchQuery" name="searchQuery">
+    </div>
+    <div class="input-wrapper">
+      <label for="searchRange">Search range:</label>
+      <select id="searchRange" name="searchRange">
+      </select>
+    </div>
+    <div class="input-wrapper">
+      <label for="threshold">Levenshtein distance threshold:</label>
+      <input type="range" id="threshold" name="threshold" min="0" max="10" step="1" value="5">
+      <span id="thresholdValue"></span>
+    </div>
+    <button id="searchButton">Search</button>
+    <div class="result-wrapper">
+      <div class="result-count"></div>
+      <ul class="result-list"></ul>
+    </div>
+    <script>
+      // Define the search ranges
+      var ranges = ['A2:A2349', 'B2:B2349', 'C2:C2349'];
+
+      // Populate the search range dropdown
+      var searchRangeSelect = document.getElementById('searchRange');
+      ranges.forEach(function(range) {
+        var option = document.createElement('option');
+        option.value = range;
+        option.textContent = range;
+        searchRangeSelect.appendChild(option);
+      });
+
+      // Display the current threshold value
+      var thresholdInput = document.getElementById('threshold');
+      var thresholdValue = document.getElementById('thresholdValue');
+      thresholdValue.textContent = thresholdInput.value;
+      thresholdInput.addEventListener('input', function() {
+        thresholdValue.textContent = thresholdInput.value;
+      });
+
+      // Perform the search when the "Search" button is clicked
+      var searchButton = document.getElementById('searchButton');
+      searchButton.addEventListener('click', function() {
+        var searchQuery = document.getElementById('searchQuery').value.toLowerCase();
+        var searchRange = document.getElementById('searchRange').value;
+        var threshold = parseInt(document.getElementById('threshold').value);
+        google.script.run.withSuccessHandler(function(results) {
+          var resultCount = results.length;
+          var resultCountElement = document.querySelector('.result-count');
+          var resultListElement = document.querySelector('.result-list');
+          resultCountElement.textContent = 'Results found: ' + resultCount;
+
+          // Clear any existing search results
+          resultListElement.innerHTML = '';
+
+          // Display the search results
+          results.forEach(function(result) {
+            var li = document.createElement('li');
+            li.textContent = result;
+            resultListElement.appendChild(li);
+          });
+        }).findSimilar(searchQuery, range, threshold);
+      });
+    </script>
+  </body>
+</html>
