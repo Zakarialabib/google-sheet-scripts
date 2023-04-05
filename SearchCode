@@ -1,0 +1,12 @@
+function SearchCode(searchValue, searchData) {
+  var searchResult = '';
+  var found = false;
+  for (var i = 0; i < searchData.length; i++) {
+    var cellValue = searchData[i][0];
+    if (cellValue.indexOf(searchValue) !== -1) { 
+      searchResult += (searchResult == '') ? cellValue : ', ' + cellValue;
+      found = true; 
+    }
+  }
+    return (found) ? searchResult : 'not found';
+}
